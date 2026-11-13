@@ -180,3 +180,74 @@ Useful job websites:
 - BDJobs
 - LinkedIn Jobs
 - Bdjobs Career
+
+             ***** Writing Test Cases & Bug Reports *******
+  *What makes a good test case- ID, title, preconditions, steps, test data, expected result and actual result/status during execution.
+One test case checks one thing. Titles should say what is checked.Expected results must be specific: not 'works fine', but 'Dashboard page opens with the user's name'.
+Example- TC-01 Login with valid credentials
+Precondition: user test@mail.com exists
+Steps: 1. Open /login 2. Enter email and password 3. Click Login
+Expected: Dashboard opens and shows 'Welcome, Test'.
+*The stranger test- Hand your test case to someone who has never seen the app. If they can run it and decide pass or fail without asking you a single question, it is a good test case. If they need to ask 'which user?' or 'what should I see?', the preconditions or expected result are missing.
+*Atomic, but not tiny-One test case should verify one behaviour, so a failure points to one problem. But don't split every click into its own case. 'Login with valid credentials' is one case even though it has four steps.
+*Write for re-use-Good cases survive releases. Avoid things that change often, like exact prices or today's date, unless that is the point of the test. Put changeable values in the Test data column, not inside the steps.
+** FOR interview question**
+*What is the difference between a test scenario and a test case?-  A scenario is a one-line idea of what to test, such as 'User logs in with wrong password'. A test case is the detailed version: preconditions, data, exact steps and expected result. Scenarios give coverage quickly; test cases make execution repeatable.
+*How many test cases do you write per day?- It depends on complexity, but I avoid quoting a number as a target. For a medium feature I might design 20-40 cases a day including review. Quality and coverage of risk matter more than count.
+**The test case template real teams use
+  -Every company has its own test management tool, but the columns are almost always the same. Learn this template once and you can work in Jira, TestRail, Zephyr, Azure DevOps or a plain spreadsheet.
+  *Twelve standard columns: ID, module, title, priority, type, preconditions, test data, steps, expected result, actual result, status, linked requirement.
+-Write steps as actions (Open, Enter, Click) and expected results as things you can see.
+*Example : ID: TC-LOGIN-003
+Module: Login
+Title: Login fails with wrong password
+Priority: High · Type: Negative
+Preconditions: User test@mail.com exists and is active
+Test data: Email test@mail.com, Password Wrong@123
+Steps: 1. Open /login 2. Enter email 3. Enter wrong password 4. Click Login
+Expected: Error 'Invalid email or password' shows, user stays on /login, password field is cleared
+Actual: (filled during the run)
+Status: Not run
+Requirement: US-12 Login
+*Why priority and type columns matter-When time runs out before release, the team runs High priority cases first. The Type column (Positive, Negative, Boundary, Regression) lets you filter quickly, for example 'show me all negative cases for payments'.
+*Priority (High, Medium, Low) helps manage tight deadlines.
+*Type (Positive, Negative, Boundary, Regression) helps target specific risks: • Positive: Testing with valid data to confirm the feature works as intended.
+• Negative: Testing with invalid data to confirm the app blocks mistakes safely.
+• Boundary: Testing the exact limits of a rule (such as a 5-digit, 6-digit, and 7-digit PIN code).
+• Regression: Re-running older tests after a code change to make sure nothing that previously worked got broken.
+*Preconditions vs steps- Preconditions are the state before you start: user exists, cart has 2 items, feature flag is on. Steps are only what you do during the test. Mixing them makes cases long and hard to reuse.
+*status values- Shows whether you have done the test yet.- Not run, Passed, Failed, Blocked, Skipped.Blocked' means you could not run it because of another problem. Always link the bug ID next to a Failed status.
+**Interview questions**
+  *Which test management tools have you used?-Name the tool honestly, then show you know the structure: 'In TestRail we organised cases by module with ID, preconditions, steps, expected result and priority, linked each case to its Jira story, and tracked runs per release.' The structure matters more than the tool.
+  *What does 'Blocked' mean in test execution?-The case cannot be run because of something outside it, such as an environment being down or an earlier bug stopping the flow. It is different from Failed, where the case ran and the result was wrong.
+  *How do you prioritise test cases?-By business risk and usage: money, security, data loss and the most-used flows are High. Rare paths and cosmetic checks are Low. Priority decides what runs first when time is short.
+  **From user story to test cases**
+  -Read the story: who, what, why. Each acceptance criterion gives you at least one positive and one negative case.
+  
+-Ask questions about gaps before writing: limits, error messages, roles, devices.
+-Write scenarios first (one line each), then expand the important ones into full test cases.
+**example: (forgot password story)
+- Story: As a user, I want to reset my password by email so I can log in again.
+AC1: Reset link is sent to registered emails.
+AC2: Link expires after 30 minutes.
+AC3: New password must be 8+ characters.
+
+Scenarios:
+- Registered email gets the link (AC1 positive)
+- Unregistered email: same neutral message, no email sent (AC1 negative, security)
+- Link used at 29 minutes works, at 31 minutes fails (AC2 boundaries)
+- Link works only once
+- 7-character password rejected, 8 accepted (AC3 boundaries)
+- Old password no longer works after reset
+  *Questions that find bugs before code exists- What happens with empty input? What are the limits? What error message exactly? Who can do this, and who can't? What about mobile? Asking these in refinement meetings is called 'shift-left' testing, and it's the cheapest bug fix there is.
+  *Given / When / Then- Many teams write acceptance criteria in Gherkin: Given a registered user, When they request a reset, Then a link is emailed. Each Given/When/Then maps almost directly to precondition, steps and expected result in your test case.
+  *Don't forget non-functional checks- Stories rarely mention speed, security or accessibility, but users notice them. Add a few cases: does the reset email arrive in a reasonable time, does the page work with a keyboard, is the link single-use?
+  *Interview questions*
+  *How do you write test cases when requirements are unclear?- I list my assumptions and questions, confirm them with the product owner or developer, and meanwhile write scenarios from similar features and common user behaviour. I mark cases built on assumptions so they can be updated once answers arrive.
+  *What is shift-left testing? - Testing earlier in the lifecycle: reviewing requirements and designs, asking questions in refinement, and preparing tests before code is written. Bugs found in requirements cost far less to fix than bugs found in production.
+  *How do you know you have enough test cases?- Every acceptance criterion has positive and negative coverage, boundaries are tested, high-risk areas have extra depth, and the traceability matrix has no uncovered requirement. Then time and risk decide how far to go beyond that.
+  
+
+
+
+
